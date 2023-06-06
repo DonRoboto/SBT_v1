@@ -1,17 +1,7 @@
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar 23 18:57:03 2023
-
-@author: yor5
-"""
-#import os
 import numpy as np
 import torch
 import torch.nn as nn
-#import torch.multiprocessing as _mp
-#from torchvision.datasets import MNIST
 from torchvision.datasets import FashionMNIST
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
@@ -28,10 +18,7 @@ from pymoo.core.problem import Problem
 from matplotlib import pyplot as plt
 
 
-#def get_optimizer(model, lr, momentum, weight_decay):
 def get_optimizer(model, lr, momentum):
-    """This is where users choose their optimizer and define the
-       hyperparameter space they'd like to search."""
     optimizer_class = optim.SGD
     return optimizer_class(model.parameters(), lr=lr, momentum=momentum)
 
@@ -114,8 +101,6 @@ class Trainer:
 
     def __init__(self, model, optimizer, loss_fn=None, train_data=None,
                   test_data=None, batch_size=None, device=None):
-        """Note: Trainer objects don't know about the database."""
-
         self.model = model
         self.optimizer = optimizer
         self.loss_fn = loss_fn
@@ -143,7 +128,6 @@ class Trainer:
             self.optimizer.step()
 
     def eval(self):
-        """Evaluate model on the provided validation or test set."""
         self.model.eval()
         dataloader = tqdm.tqdm(DataLoader(self.test_data, self.batch_size, True),
                                 desc='Eval (task {})'.format(self.task_id),
@@ -180,9 +164,6 @@ def update_position(particle, velocity):
   return new_particle
 
 
-
-
-
 if __name__ == "__main__":    
     device = "cuda"
     if not torch.cuda.is_available():
@@ -206,7 +187,7 @@ if __name__ == "__main__":
     space_momentum = np.linspace(mm_min, mm_max)
     
     
-    #espacio de hyperparams
+    #hyperparams space
     hyperparams_space = [space_lr, space_momentum]    
     print(hyperparams_space)    
 
@@ -220,8 +201,7 @@ if __name__ == "__main__":
        
     plt.grid()
     plt.show()
-         
-    
+             
 
     problem = Problem(n_var=2, xl=[np.min(space_lr), np.min(space_momentum)], xu=[np.max(space_lr), np.max(space_momentum)])
     sampling = FloatRandomSampling()
@@ -244,7 +224,7 @@ if __name__ == "__main__":
     pbest_position = particles
     
     
-    #graph de resultados
+    #graph de muestreo inicial
     muestra_lr = []
     muestra_momentum = []
     n = []
@@ -273,7 +253,7 @@ if __name__ == "__main__":
     plt.grid()
     plt.show()
     
-    
+    #PSO
     pbest_fitness = []
     for i in range(population_size):
         pbest_fitness.append(workers[i].run())
@@ -290,8 +270,7 @@ if __name__ == "__main__":
     
     result=[]
     # Loop for the number of generation
-    for t in range(generation):
-        
+    for t in range(generation):        
         #calcular la velocidad y posicion de la particula
         for n in range(population_size):
             # Update the velocity of each particle
@@ -373,8 +352,7 @@ if __name__ == "__main__":
         
     print(my_dict)
     
-    
-    
+    #graph resultados    
     #SERIES DE TIEMPO POR GENERACIONES
     fig, ax = plt.subplots()
     for i in range(population_size):
@@ -395,7 +373,7 @@ if __name__ == "__main__":
     
     
     
-    #graph primeros resultados
+    #graph resultados
     muestra_lr = []
     muestra_momentum = []
     n = []
